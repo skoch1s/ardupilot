@@ -275,6 +275,16 @@ private:
     void control_hover(void);
     void relax_attitude_control();
 
+    // Landing detection for manual VTOL modes
+    void update_land_and_crash_detectors(void);
+    void update_land_detector(void);
+    void set_land_complete(bool b);
+    void set_land_complete_maybe(bool b);
+#if HAL_LOGGING_ENABLED
+    void Log_LDET(uint16_t logging_flags, uint32_t detector_count);
+#endif
+    
+    // Existing landing functions for AUTO modes
     bool check_land_complete(void);
     bool land_detector(uint32_t timeout_ms);
     bool check_land_final(void);
@@ -487,7 +497,19 @@ private:
 
         // landing detection threshold in meters
         AP_Float detect_alt_change_m;
+        
+        // logging state for new land detector
+        uint16_t last_logged_flags;
+        uint32_t last_logged_count;
+        uint32_t last_logged_ms;
     } landing_detect;
+    
+    // 1hz filtered acceleration for landing detection
+    LowPassFilterVector3f land_accel_ef_filter{1.0};
+    
+    // landing state flags
+    bool land_complete;
+    bool land_complete_maybe;
 
     // throttle mix acceleration filter
     LowPassFilterVector3f throttle_mix_accel_ef_filter{1.0};

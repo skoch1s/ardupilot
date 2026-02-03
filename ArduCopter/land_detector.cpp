@@ -287,6 +287,7 @@ void Copter::update_throttle_mix()
         return;
     }
 
+    // acro, stabilize, etc.
     if (flightmode->has_manual_throttle()) {
         // manual throttle
         if (channel_throttle->get_control_in() <= 0 && air_mode != AirMode::AIRMODE_ENABLED) {
